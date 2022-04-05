@@ -3,6 +3,8 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.Duration;
+import java.time.Instant;
 
 public class StudyHelper extends JFrame{
     private JPanel panelMain;
@@ -15,6 +17,8 @@ public class StudyHelper extends JFrame{
     private JButton studyButton;
     private JButton resetButton;
 
+    private Timer timer;
+
     public static void main(String[] args) {
         //to make gain the system ui look; support cross-platform
         try {
@@ -26,12 +30,36 @@ public class StudyHelper extends JFrame{
 
         StudyHelper sh = new StudyHelper();
 
+        //button actions
+        sh.studyButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Instant start = Instant.now();
+                sh.timer = new Timer(1, new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        Duration duration = Duration.between(start, Instant.now());
+                        long h = duration.toHours();
+                        long m = duration.toMinutes() - 60 * h;
+                        long s = duration.getSeconds() - 60 * m;
+
+                        sh.clockLabel.setText(String.format("%02d",h)+" : "+String.format("%02d",m)+" : "+String.format("%02d",s));
+                    }
+                });
+                sh.timer.start();
+            }
+        });
+
+    }
+
+
+    public StudyHelper() {
+
         // Layout the elements
-        setLayout(sh);
+        setLayout(this);
 
         //initialize studyhelper
-        studyHelperInitialize(sh);
-
+        studyHelperInitialize(this);
     }
     private  static void studyHelperInitialize(StudyHelper sh){
         sh.setTitle("Study Helper");
@@ -127,10 +155,5 @@ public class StudyHelper extends JFrame{
         sh.setContentPane(sh.panelMain);
 
     }
-    public StudyHelper() {
-
-
-    }
-
 
 }
