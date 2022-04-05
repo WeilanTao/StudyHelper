@@ -42,7 +42,7 @@ public class StudyHelper extends JFrame{
         // Todo: I don't want it to exit on close!!!
         sh.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-//        sh.setResizable(false);
+        sh.setResizable(false);
         sh.setLocationRelativeTo(null);
 
     }
