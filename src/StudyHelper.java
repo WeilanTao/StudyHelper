@@ -16,6 +16,7 @@ public class StudyHelper extends JFrame{
     private JButton resetButton;
 
     public static void main(String[] args) {
+        //to make gain the system ui look; support cross-platform
         try {
             UIManager.setLookAndFeel(UIManager.
                     getSystemLookAndFeelClassName());
