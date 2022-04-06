@@ -6,7 +6,7 @@ import java.awt.event.ActionListener;
 import java.time.Duration;
 import java.time.Instant;
 
-public class StudyHelper extends JFrame{
+public class StudyHelper extends JFrame {
     private JPanel panelMain;
     private JPanel clockPanel;
     private JPanel buttonPanel;
@@ -19,39 +19,112 @@ public class StudyHelper extends JFrame{
 
     private Timer timer;
 
+    private ActionListener studyActionListener;
+    private ActionListener restActionListener;
+    private ActionListener resetActionListener;
+
+    private Boolean isStudy = false;
+
     public static void main(String[] args) {
         //to make gain the system ui look; support cross-platform
         try {
             UIManager.setLookAndFeel(UIManager.
                     getSystemLookAndFeelClassName());
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
         StudyHelper sh = new StudyHelper();
 
         //button actions
-        sh.studyButton.addActionListener(new ActionListener() {
+        sh.studyActionListener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Instant start = Instant.now();
-                sh.timer = new Timer(1, new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        Duration duration = Duration.between(start, Instant.now());
-                        long h = duration.toHours();
-                        long m = duration.toMinutes() - 60 * h;
-                        long s = duration.getSeconds() - 60 * m;
+                sh.isStudy= true;
+                sh.restButton.setEnabled(true);
+                sh.studyButton.setEnabled(false);
+                sh.resetButton.setEnabled(true);
 
-                        sh.clockLabel.setText(String.format("%02d",h)+" : "+String.format("%02d",m)+" : "+String.format("%02d",s));
-                    }
-                });
-                sh.timer.start();
+                runTimer(sh, e);
             }
-        });
+        };
 
+        sh.restActionListener = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                sh.isStudy=false;
+                sh.restButton.setEnabled(false);
+                sh.studyButton.setEnabled(true);
+                sh.resetButton.setEnabled(true);
+                runTimer(sh, e);
+            }
+        };
+
+        sh.resetActionListener = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                sh.restButton.setEnabled(true);
+                sh.studyButton.setEnabled(true);
+                resetTimer(sh,e);
+            }
+        };
+
+        sh.restButton.setEnabled(false);
+        sh.resetButton.setEnabled(false);
+        sh.studyButton.addActionListener(sh.studyActionListener);
+        sh.restButton.addActionListener(sh.restActionListener);
+        sh.resetButton.addActionListener(sh.resetActionListener);
     }
 
+    private static void resetTimer(StudyHelper sh, ActionEvent e){
+        if(e.getSource() == sh.studyButton){
+//                System.out.println("It is study button... releasing restActionListener");
+            sh.timer.removeActionListener(sh.restActionListener);
+        }else if(e.getSource() == sh.restButton){
+//                System.out.println("It is rest button... releasing studyActionListener");
+            sh.timer.removeActionListener(sh.studyActionListener);
+        }
+
+        if(sh.timer != null && sh.timer.isRunning()){
+            sh.timer.stop();
+            sh.clockLabel.setText(String.format("%02d", 0) + " : " + String.format("%02d", 0) + " : " + String.format("%02d", 0));
+            sh.noticeLabel.setText("Study Helper");
+        }
+    }
+
+    private static void runTimer(StudyHelper sh, ActionEvent e){
+        if (sh.timer != null && sh.timer.isRunning()){
+            sh.timer.stop();
+
+            if(e.getSource() == sh.studyButton){
+//                System.out.println("It is study button... releasing restActionListener");
+                sh.timer.removeActionListener(sh.restActionListener);
+            }else if(e.getSource() == sh.restButton){
+//                System.out.println("It is rest button... releasing studyActionListener");
+                sh.timer.removeActionListener(sh.studyActionListener);
+            }
+        }else if (sh.timer != null && !sh.timer.isRunning()){
+            if(e.getSource() == sh.resetButton){
+                sh.timer.removeActionListener(sh.resetActionListener);
+            }
+        }
+
+        Instant start = Instant.now();
+        sh.timer = new Timer(1, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Duration duration = Duration.between(start, Instant.now());
+                long h = duration.toHours();
+                long m = duration.toMinutes() - 60 * h;
+                long s = duration.getSeconds() - 60 * m -3600*h;
+
+                sh.clockLabel.setText(String.format("%02d", h) + " : " + String.format("%02d", m) + " : " + String.format("%02d", s));
+                String notice = sh.isStudy ?"Happy Study!":"Take a rest!";
+                sh.noticeLabel.setText(notice);
+            }
+        });
+        sh.timer.start();
+    }
 
     public StudyHelper() {
 
@@ -61,7 +134,8 @@ public class StudyHelper extends JFrame{
         //initialize studyhelper
         studyHelperInitialize(this);
     }
-    private  static void studyHelperInitialize(StudyHelper sh){
+
+    private static void studyHelperInitialize(StudyHelper sh) {
         sh.setTitle("Study Helper");
         sh.setSize(1080, 700);
         sh.setVisible(true);
@@ -75,7 +149,7 @@ public class StudyHelper extends JFrame{
 
     }
 
-    private static void setLayout (StudyHelper sh){
+    private static void setLayout(StudyHelper sh) {
         //component initializing and styling
 
         //label
@@ -118,38 +192,38 @@ public class StudyHelper extends JFrame{
         //the title line
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.gridwidth=3;
-        gbc.gridheight=1;
+        gbc.gridwidth = 3;
+        gbc.gridheight = 1;
         gbc.ipady = 10;
-        gbc.weighty =500;
-        gbc.fill=GridBagConstraints.HORIZONTAL;
-        sh.panelMain.add(title,gbc);
+        gbc.weighty = 500;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        sh.panelMain.add(title, gbc);
 
         //the clock line
         gbc.gridx = 0;
         gbc.gridy = 1;
-        gbc.gridwidth=3;
-        gbc.gridheight=1;
+        gbc.gridwidth = 3;
+        gbc.gridheight = 1;
         gbc.ipady = 350;
-        gbc.fill=GridBagConstraints.HORIZONTAL;
-        sh.clockPanel= new JPanel(new GridLayout(1,2));
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        sh.clockPanel = new JPanel(new GridLayout(1, 2));
         sh.clockPanel.add(sh.clockLabel);
         sh.clockPanel.add(sh.noticeLabel);
-        sh.panelMain.add(sh.clockPanel,gbc);
+        sh.panelMain.add(sh.clockPanel, gbc);
 
 
         //the button line
-        sh.buttonPanel= new JPanel(new GridLayout(1,3,50,5));
-        sh.buttonPanel.add(sh.studyButton,gbc);
-        sh.buttonPanel.add(sh.restButton,gbc);
-        sh.buttonPanel.add(sh.resetButton,gbc);
+        sh.buttonPanel = new JPanel(new GridLayout(1, 3, 50, 5));
+        sh.buttonPanel.add(sh.studyButton, gbc);
+        sh.buttonPanel.add(sh.restButton, gbc);
+        sh.buttonPanel.add(sh.resetButton, gbc);
         gbc.gridx = 0;
         gbc.gridy = 2;
-        gbc.gridwidth=2;
-        gbc.gridheight=1;
+        gbc.gridwidth = 2;
+        gbc.gridheight = 1;
         gbc.ipady = btnh;
-        gbc.fill=GridBagConstraints.HORIZONTAL;
-        sh.panelMain.add(sh.buttonPanel,gbc);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        sh.panelMain.add(sh.buttonPanel, gbc);
 
         //add painMain to JFrame studyHelper
         sh.setContentPane(sh.panelMain);
