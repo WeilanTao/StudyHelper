@@ -3,6 +3,8 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.time.Duration;
 import java.time.Instant;
 
@@ -36,6 +38,17 @@ public class StudyHelper extends JFrame {
 
 
         StudyHelper sh = new StudyHelper();
+
+        //window action
+
+        sh.addWindowListener(new WindowAdapter()
+        {
+            public void windowClosing(WindowEvent e)
+            {
+                sh.setExtendedState(JFrame.ICONIFIED);
+            }
+        });
+
 
         //button actions
         sh.studyActionListener = new ActionListener() {
@@ -155,7 +168,7 @@ public class StudyHelper extends JFrame {
 
 
         // Todo: I don't want it to exit on close!!!
-        sh.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        sh.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 
         sh.setResizable(false);
         sh.setLocationRelativeTo(null);
