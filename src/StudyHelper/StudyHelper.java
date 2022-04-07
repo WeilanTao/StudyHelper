@@ -27,11 +27,7 @@ public class StudyHelper extends JFrame {
 
     private Boolean isStudy = false;
 
-    public static void main(String[] args) {
 
-        StudyHelper sh = StudyHelper.getInstance();
-
-    }
 
     private StudyHelper() {
 
@@ -124,7 +120,7 @@ public class StudyHelper extends JFrame {
 
 
         // Todo: I don't want it to exit on close!!!
-        sh.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        sh.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         sh.setResizable(false);
         sh.setLocationRelativeTo(null);
