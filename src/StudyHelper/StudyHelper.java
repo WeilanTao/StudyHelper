@@ -1,10 +1,10 @@
+package StudyHelper;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.time.Duration;
 import java.time.Instant;
 
@@ -28,6 +28,13 @@ public class StudyHelper extends JFrame {
     private Boolean isStudy = false;
 
     public static void main(String[] args) {
+
+        StudyHelper sh = StudyHelper.getInstance();
+
+    }
+
+    private StudyHelper() {
+
         //to make gain the system ui look; support cross-platform
         try {
             UIManager.setLookAndFeel(UIManager.
@@ -36,59 +43,16 @@ public class StudyHelper extends JFrame {
             e.printStackTrace();
         }
 
+        // Layout the elements
+        setLayout(this);
 
-        StudyHelper sh = new StudyHelper();
+        //initialize studyhelper
+        studyHelperInitialize(this);
+    }
 
-        //window action
-
-        sh.addWindowListener(new WindowAdapter()
-        {
-            public void windowClosing(WindowEvent e)
-            {
-                sh.setExtendedState(JFrame.ICONIFIED);
-            }
-        });
-
-
-        //button actions
-        sh.studyActionListener = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                sh.isStudy= true;
-                sh.restButton.setEnabled(true);
-                sh.studyButton.setEnabled(false);
-                sh.resetButton.setEnabled(true);
-
-                runTimer(sh, e);
-            }
-        };
-
-        sh.restActionListener = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                sh.isStudy=false;
-                sh.restButton.setEnabled(false);
-                sh.studyButton.setEnabled(true);
-                sh.resetButton.setEnabled(true);
-                runTimer(sh, e);
-            }
-        };
-
-        sh.resetActionListener = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                sh.isStudy=false;
-                sh.restButton.setEnabled(true);
-                sh.studyButton.setEnabled(true);
-                resetTimer(sh,e);
-            }
-        };
-
-        sh.restButton.setEnabled(false);
-        sh.resetButton.setEnabled(false);
-        sh.studyButton.addActionListener(sh.studyActionListener);
-        sh.restButton.addActionListener(sh.restActionListener);
-        sh.resetButton.addActionListener(sh.resetActionListener);
+    private static final StudyHelper INSTANCE= new StudyHelper();
+    public static StudyHelper getInstance(){
+        return INSTANCE;
     }
 
     private static void resetTimer(StudyHelper sh, ActionEvent e){
@@ -152,14 +116,6 @@ public class StudyHelper extends JFrame {
         sh.timer.start();
     }
 
-    public StudyHelper() {
-
-        // Layout the elements
-        setLayout(this);
-
-        //initialize studyhelper
-        studyHelperInitialize(this);
-    }
 
     private static void studyHelperInitialize(StudyHelper sh) {
         sh.setTitle("Study Helper");
@@ -172,6 +128,46 @@ public class StudyHelper extends JFrame {
 
         sh.setResizable(false);
         sh.setLocationRelativeTo(null);
+
+        //button actions
+        sh.studyActionListener = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                sh.isStudy= true;
+                sh.restButton.setEnabled(true);
+                sh.studyButton.setEnabled(false);
+                sh.resetButton.setEnabled(true);
+
+                runTimer(sh, e);
+            }
+        };
+
+        sh.restActionListener = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                sh.isStudy=false;
+                sh.restButton.setEnabled(false);
+                sh.studyButton.setEnabled(true);
+                sh.resetButton.setEnabled(true);
+                runTimer(sh, e);
+            }
+        };
+
+        sh.resetActionListener = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                sh.isStudy=false;
+                sh.restButton.setEnabled(true);
+                sh.studyButton.setEnabled(true);
+                resetTimer(sh,e);
+            }
+        };
+
+        sh.restButton.setEnabled(false);
+        sh.resetButton.setEnabled(false);
+        sh.studyButton.addActionListener(sh.studyActionListener);
+        sh.restButton.addActionListener(sh.restActionListener);
+        sh.resetButton.addActionListener(sh.resetActionListener);
 
     }
 
