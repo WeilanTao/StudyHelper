@@ -34,6 +34,7 @@ public class StudyHelper extends JFrame {
             e.printStackTrace();
         }
 
+
         StudyHelper sh = new StudyHelper();
 
         //button actions
@@ -63,6 +64,7 @@ public class StudyHelper extends JFrame {
         sh.resetActionListener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                sh.isStudy=false;
                 sh.restButton.setEnabled(true);
                 sh.studyButton.setEnabled(true);
                 resetTimer(sh,e);
@@ -97,10 +99,8 @@ public class StudyHelper extends JFrame {
             sh.timer.stop();
 
             if(e.getSource() == sh.studyButton){
-//                System.out.println("It is study button... releasing restActionListener");
                 sh.timer.removeActionListener(sh.restActionListener);
             }else if(e.getSource() == sh.restButton){
-//                System.out.println("It is rest button... releasing studyActionListener");
                 sh.timer.removeActionListener(sh.studyActionListener);
             }
         }else if (sh.timer != null && !sh.timer.isRunning()){
@@ -118,9 +118,22 @@ public class StudyHelper extends JFrame {
                 long m = duration.toMinutes() - 60 * h;
                 long s = duration.getSeconds() - 60 * m -3600*h;
 
+
+                if((sh.isStudy && h >= 1 && m == 30  && s == 00  ) || (!sh.isStudy && (m %10) ==0 && m!=0 && s==0  )){
+                    Toolkit.getDefaultToolkit().beep();
+
+
+                }
+
+                if((!sh.isStudy && (m>=10 || h>0))){
+                    sh.noticeLabel.setText("Time to study");
+                }
+                else{
+                    String notice = sh.isStudy ?"Happy Study!":"Take a rest!";
+                    sh.noticeLabel.setText(notice);
+                }
                 sh.clockLabel.setText(String.format("%02d", h) + " : " + String.format("%02d", m) + " : " + String.format("%02d", s));
-                String notice = sh.isStudy ?"Happy Study!":"Take a rest!";
-                sh.noticeLabel.setText(notice);
+
             }
         });
         sh.timer.start();
@@ -154,13 +167,14 @@ public class StudyHelper extends JFrame {
 
         //label
         JLabel title = new JLabel("Good Good Study, Day Day Up", SwingConstants.CENTER);
-        sh.clockLabel = new JLabel("Clock Area", SwingConstants.CENTER);
-        sh.noticeLabel = new JLabel("Notice Area", SwingConstants.CENTER);
+        sh.clockLabel = new JLabel("00 : 00 : 00", SwingConstants.CENTER);
+        sh.noticeLabel = new JLabel("Study Helper", SwingConstants.CENTER);
 
         Font titleFont = title.getFont().deriveFont(Font.BOLD, 32f);
+        Font clockFont = title.getFont().deriveFont(Font.BOLD, 45f);
         title.setFont(titleFont);
         title.setVerticalAlignment(JLabel.TOP);
-        sh.clockLabel.setFont(titleFont);
+        sh.clockLabel.setFont(clockFont);
         sh.noticeLabel.setFont(titleFont);
 
         //button
